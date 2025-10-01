@@ -18,6 +18,7 @@ lib/
 lib64/
 parts/
 sdist/
+notebooks/best_model_dir/
 var/
 *.egg-info/
 .installed.cfg
