@@ -82,34 +82,58 @@ stages:
     params:
       params.yaml:
         Train.LightGBM:
-          n_estimators: 154
-          max_depth: 27
-          learning_rate: 0.22234435854395157
-          subsample: 0.7592213724048168
-          min_child_weight: 20
-          min_split_gain: 0.004604680609280751
-          reg_lambda: 97.81002379097947
+          n_estimators: 57
+          max_depth: 18
+          learning_rate: 0.11508843979525717
+          subsample: 0.8219692257816482
+          min_child_weight: 12
+          min_split_gain: 0.1266801534144861
+          reg_lambda: 70.7734573994436
           n_jobs: -1
         Train.Random_Forest:
-          n_estimators: 479
+          n_estimators: 372
           criterion: squared_error
-          max_depth: 17
-          max_features: 1
-          min_samples_split: 9
-          min_samples_leaf: 2
-          max_samples: 0.6603673526197066
+          max_depth: 30
+          max_features:
+          min_samples_split: 7
+          min_samples_leaf: 3
+          max_samples: 0.5003890142288723
           verbose: 1
           n_jobs: -1
     outs:
     - path: models/model.joblib
       hash: md5
-      md5: 6b46381f9386dc2773fb6279ec731865
-      size: 149192936
+      md5: c002854f10c9f057d5cc4926e93bf7ef
+      size: 143289496
     - path: models/power_transformer.joblib
       hash: md5
       md5: e7ec44d4a73095ab4142454a9cf27afc
       size: 837
     - path: models/stacking_regressor.joblib
       hash: md5
-      md5: b507bde6e37169cdbbfd1b8519681301
-      size: 149181386
+      md5: 283003d4ce82d57fdd8bda6f4b9e00a5
+      size: 143273722
+  evaluation:
+    cmd: python src/models/evaluation.py
+    deps:
+    - path: data/processed/test_trans.csv
+      hash: md5
+      md5: 6a7f129b63c05b9922c237e6ae702b26
+      size: 1358276
+    - path: data/processed/train_trans.csv
+      hash: md5
+      md5: 607d3fb5ca7957bc02695329fe4322bd
+      size: 4060457
+    - path: models/model.joblib
+      hash: md5
+      md5: c002854f10c9f057d5cc4926e93bf7ef
+      size: 143289496
+    - path: src/models/evaluation.py
+      hash: md5
+      md5: accd281fa377a2e08b890f2db80ac435
+      size: 5994
+    outs:
+    - path: run_information.json
+      hash: md5
+      md5: a157d82caf234701aa978b9ae55e8a16
+      size: 220
