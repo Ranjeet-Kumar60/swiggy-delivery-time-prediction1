@@ -81,7 +81,7 @@ client = MlflowClient()
 model_name = load_model_information("run_information.json")['model_name']
 
 # stage of the model
-stage = "Staging"
+stage = "Production"
 
 
 # load model path
