@@ -12,10 +12,14 @@ ENV PYTHONUNBUFFERED=1
 # ===============================
 # System dependencies (minimal)
 # ===============================
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends libgomp1 \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    build-essential \
+    python3-dev \
+    libgomp1 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
 
 # ===============================
 # Working directory
