@@ -57,7 +57,7 @@ sudo docker run -d \
   --restart always \
   -p 80:8000 \
   --name "$CONTAINER_NAME" \
-  -e DAGSHUB_USER_TOKEN="$DAGSHUB_USER_TOKEN" \
+  -e DAGSHUB_USER_TOKEN="$DAGSHUB_TOKEN" \
   "$IMAGE_URI"
 
 # ================================
