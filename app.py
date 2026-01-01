@@ -17,7 +17,16 @@ set_config(transform_output='pandas')
 import dagshub
 import mlflow.client
 
-dagshub.init(repo_owner='Ranjeet-Kumar60', repo_name='swiggy-delivery-time-prediction1', mlflow=True)
+import os
+
+if os.getenv("ENABLE_DAGSHUB") == "true":
+    import dagshub
+    dagshub.init(
+        repo_owner="Ranjeet-Kumar60",
+        repo_name="swiggy-delivery-time-prediction1",
+        mlflow=True
+    )
+
 
 mlflow.set_tracking_uri('https://dagshub.com/Ranjeet-Kumar60/swiggy-delivery-time-prediction1.mlflow')
 
