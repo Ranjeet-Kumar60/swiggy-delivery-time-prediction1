@@ -1,72 +1,33 @@
 #!/bin/bash
-# ================================
-# LOG EVERYTHING
-# ================================
-exec > /home/ubuntu/start_docker.log 2>&1
-echo "===== START DOCKER SCRIPT ====="
-date
+set -e
 
-# ================================
-# VARIABLES
-# ================================
-REGION="eu-north-1"
-ACCOUNT_ID="266735802734"
-IMAGE_NAME="food_delivery_time_prediction"
-IMAGE_TAG="latest"
-CONTAINER_NAME="delivery_time_pred"
+echo "Waiting for CodeDeploy agent to be active..."
+until systemctl is-active --quiet codedeploy-agent; do
+  sleep 5
+done
 
-IMAGE_URI="${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
+echo "Waiting for Docker service to be active..."
+until systemctl is-active --quiet docker; do
+  sleep 5
+done
 
-# ================================
-# CHECK DISK
-# ================================
-echo "Disk usage:"
-df -h
+echo "Logging in to Amazon ECR..."
+aws ecr get-login-password --region eu-north-1 | \
+docker login --username AWS --password-stdin \
+266735802734.dkr.ecr.eu-north-1.amazonaws.com
 
-# ================================
-# LOGIN TO ECR (WITH SUDO)
-# ================================
-echo "Logging in to ECR..."
-sudo aws ecr get-login-password --region "$REGION" | \
-sudo docker login --username AWS --password-stdin "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com"
+echo "Pulling latest Docker image from ECR..."
+docker pull \
+266735802734.dkr.ecr.eu-north-1.amazonaws.com/food_delivery_time_prediction:latest
 
-# ================================
-# CLEAN OLD DOCKER DATA (SAFE)
-# ================================
-echo "Cleaning docker junk..."
-sudo docker system prune -f || true
+echo "Stopping old container if it exists..."
+docker stop app || true
+docker rm app || true
 
-# ================================
-# PULL IMAGE
-# ================================
-echo "Pulling Docker image..."
-sudo docker pull "$IMAGE_URI"
-
-# ================================
-# STOP & REMOVE OLD CONTAINER
-# ================================
-echo "Checking for existing container..."
-sudo docker stop "$CONTAINER_NAME" || true
-sudo docker rm "$CONTAINER_NAME" || true
-
-# ================================
-# START NEW CONTAINER
-# ================================
 echo "Starting new container..."
-sudo docker run -d \
-  --restart always \
+docker run -d \
+  --name app \
   -p 80:8000 \
-  --name "$CONTAINER_NAME" \
-  -e DAGSHUB_USER_TOKEN="$DAGSHUB_TOKEN" \
-  "$IMAGE_URI"
+  266735802734.dkr.ecr.eu-north-1.amazonaws.com/food_delivery_time_prediction:latest
 
-# ================================
-# VERIFY
-# ================================
-echo "Running containers:"
-sudo docker ps
-
-echo "Local health check:"
-curl http://localhost || true
-
-echo "===== CONTAINER STARTED SUCCESSFULLY ====="
+echo "Deployment completed successfully."

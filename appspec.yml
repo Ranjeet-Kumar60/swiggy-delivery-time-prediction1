@@ -9,5 +9,5 @@ files:
 hooks:
   ApplicationStart:
     - location: scripts/start_docker.sh
-      timeout: 300
+      timeout: 600
       runas: root
